@@ -1,4 +1,4 @@
-Github Action for deploying NextJS Apps to AWS Elastic Beanstalk
+Github Action for deploying NextJS Apps to AWS Elastic Beanstalk (found in github/workflows/uploadtoawseb.yml)
 
 1. setup AWS EBeanstalk
 2. setup AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in Github Repository Secrets
