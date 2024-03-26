@@ -1,0 +1,32 @@
+name: Deploy master
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Build Nextjs
+      run: npm ci
+      run: npm run build
+
+    - name: Generate deployment package
+      run: zip -x */.git* -x .git* -x *.hg* -r "deploy.zip" ./
+
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: ${{env.APPLICATION_NAME}}
+        environment_name: ${{env.ENVIRONMENT_NAME}}
+        version_label: EB_deployment_${{env.APPLICATION_NAME}}.${{env.ENVIRONMENT_NAME}}-${{echo github.sha | cut -c 1-11}}-${{github.run_number}}-${{date +%Y%m%d-%H%M%S}}
+        region: ${{env.REGION}}
+        deployment_package: deploy.zip
+        existing_bucket_name: ${{env.BUCKETNAME}}
